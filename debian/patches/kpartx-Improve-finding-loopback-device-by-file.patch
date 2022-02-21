@@ -1,0 +1,70 @@
+From f2bd34f273a02c0ed12e996ebe57211576e40fa6 Mon Sep 17 00:00:00 2001
+From: Julian Andres Klode <julian.klode@canonical.com>
+Date: Mon, 5 Feb 2018 09:44:36 +0100
+Subject: [PATCH] kpartx: Improve finding loopback device by file
+
+Commit 9bdfa3eb8e24b668e6c2bb882cddb0ccfe23ed5b changed kpartx
+to lookup files by absolute path, using realpath(). This introduced
+a regression when part of the filename where symbolic links. While
+the kernel stores the absolute path to the backing file, it does not
+resolve symbolic links, and hence kpartx would fail to find the loopback
+device because it resolves symbolic links when deleting.
+
+This introduces two workarounds in find_loop_by_file()
+
+(1) We match against the specified file name as is as well
+(2) We canonicalize the loopinfo.lo_name and match the canonicalized filename
+    against that.
+
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/multipath-tools/+bug/1747044
+Signed-off-by: Julian Andres Klode <julian.klode@canonical.com>
+Forwarded: https://www.redhat.com/archives/dm-devel/2018-February/msg00019.html
+---
+ kpartx/kpartx.c |  8 +-------
+ kpartx/lopart.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+--- a/kpartx/kpartx.c
++++ b/kpartx/kpartx.c
+@@ -350,10 +350,10 @@
+ 		char rpath[PATH_MAX];
+ 		if (realpath(device, rpath) == NULL) {
+ 			fprintf(stderr, "Error: %s: %s\n", device,
+-				strerror(errno));
++			strerror(errno));
+ 			exit (1);
+ 		}
+-		loopdev = find_loop_by_file(rpath);
++		loopdev = find_loop_by_file(device);
+ 
+ 		if (!loopdev && what == DELETE)
+ 			exit (0);
+--- a/kpartx/lopart.c
++++ b/kpartx/lopart.c
+@@ -51,6 +51,14 @@
+ 	struct loop_info loopinfo;
+ 	const char VIRT_BLOCK[] = "/sys/devices/virtual/block";
+ 	char path[PATH_MAX];
++	char rfilename[PATH_MAX];
++	char rloopfilename[PATH_MAX];
++	if (realpath(filename, rfilename) == NULL) {
++		fprintf(stderr, "Error: %s: %s\n", filename,
++				strerror(errno));
++		exit (1);
++	}
++
+ 	char bf_path[PATH_MAX];
+ 	char backing_file[PATH_MAX];
+ 
+@@ -102,7 +110,10 @@
+ 
+ 		close (fd);
+ 
+-		if (0 == strcmp(filename, loopinfo.lo_name)) {
++		if (0 == strcmp(filename, loopinfo.lo_name) ||
++		    0 == strcmp(rfilename, loopinfo.lo_name) ||
++		    (realpath(loopinfo.lo_name, rloopfilename) &&
++		     0 == strcmp(rfilename, rloopfilename))) {
+ 			found = realpath(path, NULL);
+ 			break;
+ 		}

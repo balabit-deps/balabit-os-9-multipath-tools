@@ -1,0 +1,26 @@
+From: Helmut Grohne <helmutg@debian.org>
+Date: Wed, 23 Dec 2020 22:52:02 +0000
+Subject: Bug#916521: FTCBFS: uses the wrong pkg-config
+
+multipath-tools fails to cross build from source, because
+multipath-tools' Makefiles hard code the build architecture pkg-config.
+After making it substitutable, it picks up the one supplied by
+dh_auto_build and cross builds successfully.
+---
+ Makefile.inc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.inc b/Makefile.inc
+index 04370d7..a9cebb8 100644
+--- a/Makefile.inc
++++ b/Makefile.inc
+@@ -15,7 +15,8 @@
+ # Uncomment to disable dmevents polling support
+ # ENABLE_DMEVENTS_POLL = 0
+ 
+-PKGCONFIG	?= pkg-config
++PKG_CONFIG	?= pkg-config
++PKGCONFIG	?= $(PKG_CONFIG)
+ 
+ ifeq ($(TOPDIR),)
+ 	TOPDIR	= ..

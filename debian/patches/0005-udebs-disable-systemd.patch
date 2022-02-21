@@ -1,0 +1,31 @@
+From: Debian DM Multipath Team <team+linux-blocks@tracker.debian.org>
+Date: Wed, 23 Dec 2020 22:52:02 +0000
+Subject: udebs: disable systemd
+
+D-I does not support systemd. So our udebs need to be systemd free
+---
+ Makefile.inc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.inc b/Makefile.inc
+index 24c0c3a..04370d7 100644
+--- a/Makefile.inc
++++ b/Makefile.inc
+@@ -37,7 +37,8 @@ ifndef RUN
+ 	endif
+ endif
+ 
+-ifndef SYSTEMD
++ifeq ($(USE_SYSTEMD), 1)
++	ifndef SYSTEMD
+ 	ifeq ($(shell $(PKGCONFIG) --modversion libsystemd >/dev/null 2>&1 && echo 1), 1)
+ 		SYSTEMD = $(shell $(PKGCONFIG) --modversion libsystemd | awk '{print $$1}')
+ 	else
+@@ -46,6 +47,7 @@ ifndef SYSTEMD
+ 				sed -n 's/systemd \([0-9]*\).*/\1/p')
+ 		endif
+ 	endif
++	endif
+ endif
+ 
+ ifndef SYSTEMDPATH
