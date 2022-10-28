@@ -9,3 +9,9 @@ kpartx-Improve-finding-loopback-device-by-file.patch
 0009-kpartx-rules-use-Debian-specific-partx-path.patch
 0010-multipath.rules-do-not-assume-usrmerged-paths.patch
 0011-Fix-bashism-in-kpartx_id-script.patch
+CVE-2022-41973.patch
+CVE-2022-41974-pre1.patch
+CVE-2022-41974.patch
+CVE-2022-41974-2.patch
+CVE-2022-41974-3.patch
+CVE-2022-41974-4.patch

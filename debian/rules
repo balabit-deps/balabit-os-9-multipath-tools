@@ -31,10 +31,11 @@ build-stamp: clean-tree
 	[ ! -f kpartx/del-part-nodes.rules ] || cp kpartx/del-part-nodes.rules debian/kpartx.del-part-nodes.udev
 	[ ! -f kpartx/dm-parts.rules ] || cp kpartx/dm-parts.rules debian/kpartx.dm-parts.udev
 	[ ! -f kpartx/kpartx.rules ] || cp kpartx/kpartx.rules debian/kpartx.udev
-	[ ! -f multipath/multipath.rules ] || cp multipath/multipath.rules debian/multipath.udev
 	[ ! -f multipath/11-dm-mpath.rules ] || cp multipath/11-dm-mpath.rules debian/dm-mpath.udev
 
 	dh_auto_build --parallel -- $(OPTFLAGS) LIB=/lib SYSTEMDPATH=/lib USE_SYSTEMD=1
+
+	[ ! -f multipath/multipath.rules ] || cp multipath/multipath.rules debian/multipath.udev
 
 	touch $@
 

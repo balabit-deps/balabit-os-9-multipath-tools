@@ -1,3 +1,32 @@
+multipath-tools (0.8.8-1ubuntu1.22.04.1) jammy-security; urgency=medium
+
+  * SECURITY UPDATE: symlink attack
+    - debian/patches/CVE-2022-41973.patch: use /run instead of /dev/shm in
+      .gitignore, Makefile.inc, libmultipath/defaults.h,
+      multipath/Makefile, multipath/multipath.rules.in,
+      multipath/tmpfiles.conf.in.
+    - debian/multipath-tools.install: install tmpfiles.d/multipath.conf.
+    - debian/rules: copy udev rule after build.
+    - CVE-2022-41973
+  * SECURITY UPDATE: authorization bypass
+    - debian/patches/CVE-2022-41974-pre1.patch: fix command completion in
+      interactive mode in multipathd/callbacks.c, multipathd/cli.c,
+      multipathd/cli_handlers.c, multipathd/main.c.
+    - debian/patches/CVE-2022-41974.patch: more robust command parsing in
+      multipathd/callbacks.c, multipathd/cli.c, multipathd/cli.h,
+      multipathd/cli_handlers.c, multipathd/uxlsnr.c.
+    - debian/patches/CVE-2022-41974-2.patch: fix command completion with
+      robust parser in multipathd/cli.c, multipathd/cli.h,
+      multipathd/uxlsnr.c.
+    - debian/patches/CVE-2022-41974-3.patch: add test for command parsing
+      in Makefile.inc, tests/Makefile, tests/cli.c, multipathd/cli.h,
+      multipathd/cli.c.
+    - debian/patches/CVE-2022-41974-4.patch: fix memory leak handling
+      invalid commands in multipathd/uxlsnr.c.
+    - CVE-2022-41974
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 28 Oct 2022 14:43:41 -0400
+
 multipath-tools (0.8.8-1ubuntu1) jammy; urgency=medium
 
   * Merge with Debian unstable (LP: #1946834, #1961136). Remaining changes:

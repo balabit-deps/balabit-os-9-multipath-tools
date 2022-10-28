@@ -15,3 +15,4 @@
 /lib/systemd/system/multipathd.service
 /lib/systemd/system/multipathd.socket
 /etc/multipath.conf
+/lib/tmpfiles.d/multipath.conf
