@@ -110,8 +110,6 @@ binary-indep: build-indep install-indep
 	dh_installchangelogs -i
 	dh_installdocs -i
 	dh_installexamples -i
-	dh_installinit -pmultipath-tools-boot --name=multipath-tools-boot --no-start -- start 21 S .
-	dh_installinit -pmultipath-tools-boot
 	dh_installdebconf -pmultipath-tools-boot
 	dh_installman -i
 	dh_compress -i
@@ -130,7 +128,6 @@ binary-arch: build install
 	dh_installexamples -a
 	dh_lintian -a
 	dh_systemd_enable -pmultipath-tools multipathd.service
-	dh_installinit -pmultipath-tools
 	dh_installudev -pkpartx --priority=95
 	dh_installudev -pkpartx --name=dm-parts --priority=56
 	dh_installudev -pkpartx --name=del-part-nodes --priority=68

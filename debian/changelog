@@ -1,3 +1,23 @@
+multipath-tools (0.8.8-1ubuntu1.22.04.3) jammy; urgency=medium
+
+  * debian/multipath-tools.postinst: restart multipathd when upgrading from lt
+    0.8.8-1ubuntu1.22.04.3 (LP: #2035098)
+
+ -- Mitchell Dzurick <mitchell.dzurick@canonical.com>  Wed, 20 Sep 2023 08:05:06 -0700
+
+multipath-tools (0.8.8-1ubuntu1.22.04.2) jammy; urgency=medium
+
+  [ Sergio Durigan Junior ]
+  * d/p/0018-libmpathpersist-fix-command-keyword-ordering.patch:
+    Fix mpathpersist command keyword ordering. (LP: #2026881)
+
+  [ Mitchell Dzurick ]
+  * Do not install init scripts (LP: #2000186)
+    - d/multipath-tools.maintscript: remove /etc/init.d/multipath-tools
+    - d/rules: do not call dh_installinit
+
+ -- Mitchell Dzurick <mitchell.dzurick@canonical.com>  Thu, 13 Jul 2023 11:50:32 -0700
+
 multipath-tools (0.8.8-1ubuntu1.22.04.1) jammy-security; urgency=medium
 
   * SECURITY UPDATE: symlink attack

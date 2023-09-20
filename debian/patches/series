@@ -15,3 +15,4 @@ CVE-2022-41974.patch
 CVE-2022-41974-2.patch
 CVE-2022-41974-3.patch
 CVE-2022-41974-4.patch
+0018-libmpathpersist-fix-command-keyword-ordering.patch

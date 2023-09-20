@@ -1,0 +1,30 @@
+#!/bin/sh
+# postinst script for multipath-tools
+#
+# see: dh_installdeb(1)
+
+set -e
+
+FIXED=0.8.8-1ubuntu1.22.04.3
+# The previous multipath-tools.prerm maintainer script did not stop the
+# multipathd.service unit, therefore it needs to be stopped here for this
+# specific upgrade case.
+# "systemctl daemon-reload" is specifically not being called before
+#  deb-systemd-invoke because:
+#   a) it will be called later in the script, before multipathd.service is
+#      started, so let's not call it twice
+#   b) it has system-wide effects, like running all systemd generators again
+#   c) we don't really need the new multipathd.service unit file to stop the old
+#      running daemon. In fact, one could argue it's more correct to use the old
+#      unit file to stop the old daemon.
+# This approach will generate a one-time warning that can be ignored.
+if dpkg --compare-versions "$2" lt-nl "$FIXED"; then
+    echo -n "The warning about having to reload systemd units can be safely" >&2
+    echo " ignored. Please see LP: #2035098 for details." >&2
+
+    deb-systemd-invoke stop 'multipathd.service' >/dev/null || true
+fi
+
+#DEBHELPER#
+
+exit 0
