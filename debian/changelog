@@ -1,3 +1,10 @@
+multipath-tools (0.8.8-1ubuntu1.22.04.4) jammy; urgency=medium
+
+  * d/p/lp2042366-dm_get_map-fix-segfault-when-can-t-found-target.patch:
+    Introduce NULL pointer check to multipath map params. (LP: #2042366)
+
+ -- Mauricio Faria de Oliveira <mfo@canonical.com>  Tue, 31 Oct 2023 19:21:59 -0300
+
 multipath-tools (0.8.8-1ubuntu1.22.04.3) jammy; urgency=medium
 
   * debian/multipath-tools.postinst: restart multipathd when upgrading from lt

@@ -1,0 +1,55 @@
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/2042366
+Origin: upstream, https://github.com/opensvc/multipath-tools/commit/7439a41
+From 7439a41fa12dd4da31348ce97e54495ae8167cd8 Mon Sep 17 00:00:00 2001
+From: Wu Guanghao <wuguanghao3@huawei.com>
+Date: Fri, 27 May 2022 10:27:37 +0800
+Subject: [PATCH] dm_get_map: fix segfault when can't found target
+
+We got a segfault when we test multipath + iscsi.
+
+(gdb) bt
+    size=size@entry=0x55d4bc0270d8, outparams=outparams@entry=0x7f6941add640) at devmapper.c:688
+    pathvec=pathvec@entry=0x55d4bc063990, flags=flags@entry=0) at structs_vec.c:426
+    at structs_vec.c:526
+    at main.c:2280
+(gdb) f 2
+    size=size@entry=0x55d4bc0270d8, outparams=outparams@entry=0x7f6941add640) at devmapper.c:688
+688			*outparams = strdup(params);
+(gdb) l
+683			*size = length;
+684
+685		if (!outparams)
+686			r = DMP_OK;
+687		else {
+688			*outparams = strdup(params);
+689			r = *outparams ? DMP_OK : DMP_ERR;
+690		}
+691
+692	out:
+(gdb) p params
+$1 = 0x0
+
+If can't found target, we should goto out
+
+Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
+Reviewed-by: Benjamin Marzinski <bmarzins@redhat.com>
+Reviewed-by: Martin Wilck <mwilck@suse.com>
+---
+ libmultipath/devmapper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: multipath-tools-0.8.8/libmultipath/devmapper.c
+===================================================================
+--- multipath-tools-0.8.8.orig/libmultipath/devmapper.c
++++ multipath-tools-0.8.8/libmultipath/devmapper.c
+@@ -676,8 +676,8 @@ int dm_get_map(const char *name, unsigne
+ 	r = DMP_NOT_FOUND;
+ 	/* Fetch 1st target */
+ 	if (dm_get_next_target(dmt, NULL, &start, &length,
+-			       &target_type, &params) != NULL)
+-		/* more than one target */
++			       &target_type, &params) != NULL || !params)
++		/* more than one target or not found target */
+ 		goto out;
+ 
+ 	if (size)
